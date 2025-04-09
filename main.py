@@ -49,6 +49,11 @@ async def about() -> str:
     return "This is a simple FastAPI application."
 
 @app.get("/bands")
-async def bands():
-    return{"services": "We offer a variety of services including web development, data analysis, and more."}
+async def bands() -> list[dict]:
+    return BANDS
 
+@app.get("/bands/{band_name}")
+async def bands_id(band_name: str) -> str:
+    band = next((b for band in BANDS if b["name"].lower() == band_name.lower()), None)
+    if band is None:
+        return {"error": "Band not found"}
