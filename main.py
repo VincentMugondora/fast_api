@@ -1,14 +1,6 @@
 from fastapi import FastAPI
-from enum import Enum
 
 app = FastAPI()
-
-class GenreURLChoices(Enum):
-    ROCK = "rock"
-    PROGRESSIVE_ROCK = "progressive_rock"
-    GRUNGE = "grunge"
-    HEAVY_METAL = "heavy_metal"
-    POP = "pop"
  
 BANDS = [
     {
