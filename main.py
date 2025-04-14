@@ -1,11 +1,19 @@
 from fastapi import FastAPI
+from enum import Enum
 
 app = FastAPI()
 
+class GenreURLChoices(Enum):
+    ROCK = "rock"
+    PROGRESSIVE_ROCK = "progressive_rock"
+    GRUNGE = "grunge"
+    HEAVY_METAL = "heavy_metal"
+    POP = "pop"
+ 
 BANDS = [
     {
         "name": "The Beatles",
-        "genre": "Rock",
+        "genre": "pop",
         "members": ["John Lennon", "Paul McCartney", "George Harrison", "Ringo Starr"],
         "formed": 1960,
         "origin": "Liverpool, England"
@@ -42,7 +50,7 @@ BANDS = [
 
 @app.get("/")
 async def index() -> dict[str, str]:
-    return{"hello": "world"}
+    return {"hello": "world"}
 
 @app.get("/about")
 async def about() -> str:
@@ -53,7 +61,19 @@ async def bands() -> list[dict]:
     return BANDS
 
 @app.get("/bands/{band_name}")
-async def bands_id(band_name: str) -> str:
-    band = next((b for band in BANDS if b["name"].lower() == band_name.lower()), None)
+async def bands_id(band_name: str) -> dict:
+    band = next((band for band in BANDS if band["name"].lower() == band_name.lower()), None)
     if band is None:
         return {"error": "Band not found"}
+    return band
+
+@app.get("/bands/genre/{genre}")
+async def bands_genre(genre: GenreURLChoices) -> list[dict] | dict:
+    genre_bands = [
+        band for band in BANDS
+        if band["genre"].lower().replace(" ", "_") == genre.value
+    ]
+    if not genre_bands:
+        return {"error": "Genre not found"}
+    return genre_bands
+
